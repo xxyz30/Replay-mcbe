@@ -33,10 +33,11 @@ export class Replayer {
     private play(e: TickEvent) {
         let replay: number[] = this.replaying.replay[this.replayIndex++]
         this.replayEntity.teleport(this.getLocation(replay), this.replayEntity.dimension, replay[3], replay[4])
+        //当录像的内容<=当前播放的index
         if (this.replaying.replay.length <= this.replayIndex) {
             world.events.tick.unsubscribe(this.bindFun)
-            //回调
-            if (this.afterReplay != null) this.afterReplay(this.replaying)
+            if (this.afterReplay != null)
+                new Promise(() => this.afterReplay(this.replaying))
         }
     }
     private getLocation(n: number[]): Location {

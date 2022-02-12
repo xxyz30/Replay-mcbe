@@ -13,9 +13,11 @@ export class ReplayerManager {
      * @param replay 
      */
     public addReplay(replay: string | Replay) {
-        if (replay instanceof String) {
+        if (typeof replay == 'string') {
             //TODO
             //解析获得到的JSON
+            let replayInstance: Replay = JSON.parse(replay)
+            this.replays.set(replayInstance.name, replayInstance)
         } else if (replay instanceof Replay) {
             this.replays.set(replay.name, replay)
         }
