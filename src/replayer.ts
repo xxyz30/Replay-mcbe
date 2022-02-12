@@ -9,8 +9,9 @@ export class Replayer {
     private replayIndex: number = 0
     private playing: boolean
     private replaying: Replay = null
-    private afterReplay: (replay: Replay) => void
-    private bindFun = this.play.bind(this)
+    private afterReplay: (v: any, entity: Entity, replay: Replay) => void
+    private afterReplayVar: any = null
+    private bindFun: any = null
     /**
      * 构造
      * @param e 要回放的实体
@@ -18,16 +19,18 @@ export class Replayer {
     public constructor(e: Entity) {
         if (e == null) throw new Error("Null Entity!")
         this.replayEntity = e
+        this.bindFun = this.play.bind(this)
     }
     /**
      * 播放录像
      * @param replay 录像
      */
-    public replay(replay: Replay, afterReplay: (replay: Replay) => void = null) {
+    public replay<T>(replay: Replay, afterReplay: (v: T, e: Entity, replay: Replay) => void = null, afterReplayVar: T = null) {
         if (this.playing || replay == null || replay.replay == null || replay.replay.length == 0) return
         this.replayIndex = 0;
         this.replaying = replay
         this.afterReplay = afterReplay
+        this.afterReplayVar = afterReplayVar
         world.events.tick.subscribe(this.bindFun)
     }
     private play(e: TickEvent) {
@@ -37,7 +40,7 @@ export class Replayer {
         if (this.replaying.replay.length <= this.replayIndex) {
             world.events.tick.unsubscribe(this.bindFun)
             if (this.afterReplay != null)
-                new Promise(() => this.afterReplay(this.replaying))
+                this.afterReplay(this.afterReplayVar,this.replayEntity, this.replaying)
         }
     }
     private getLocation(n: number[]): Location {

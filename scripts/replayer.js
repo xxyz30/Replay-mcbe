@@ -11,21 +11,24 @@ export class Replayer {
         this.replayEntity = null;
         this.replayIndex = 0;
         this.replaying = null;
-        this.bindFun = this.play.bind(this);
+        this.afterReplayVar = null;
+        this.bindFun = null;
         if (e == null)
             throw new Error("Null Entity!");
         this.replayEntity = e;
+        this.bindFun = this.play.bind(this);
     }
     /**
      * 播放录像
      * @param replay 录像
      */
-    replay(replay, afterReplay = null) {
+    replay(replay, afterReplay = null, afterReplayVar = null) {
         if (this.playing || replay == null || replay.replay == null || replay.replay.length == 0)
             return;
         this.replayIndex = 0;
         this.replaying = replay;
         this.afterReplay = afterReplay;
+        this.afterReplayVar = afterReplayVar;
         world.events.tick.subscribe(this.bindFun);
     }
     play(e) {
@@ -35,7 +38,7 @@ export class Replayer {
         if (this.replaying.replay.length <= this.replayIndex) {
             world.events.tick.unsubscribe(this.bindFun);
             if (this.afterReplay != null)
-                new Promise(() => this.afterReplay(this.replaying));
+                this.afterReplay(this.afterReplayVar, this.replayEntity, this.replaying);
         }
     }
     getLocation(n) {

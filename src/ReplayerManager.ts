@@ -33,11 +33,13 @@ export class ReplayerManager {
     /**
      * 播放
      * @param name 播放id
+     * @param afterReplay 执行完毕后的回调
+     * @param afterReplayVar 因为不知道何时执行完毕，所以用于存值
      * @param e 要播放的实体
      */
-    public play(name: string, e: Entity, afterReplay: (replay: Replay) => void = null) {
+    public play<T>(name: string, e: Entity, afterReplay: (v: T, entity: Entity, replay: Replay) => void = null, afterReplayVar: T = null) {
         if (this.replays.has(name)) {
-            new Replayer(e).replay(this.replays.get(name), afterReplay)
+            new Replayer(e).replay(this.replays.get(name), afterReplay, afterReplayVar)
         } else {
             throw new Error(`Not found! ${name}`);
         }

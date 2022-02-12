@@ -32,11 +32,13 @@ export class ReplayerManager {
     /**
      * 播放
      * @param name 播放id
+     * @param afterReplay 执行完毕后的回调
+     * @param afterReplayVar 因为不知道何时执行完毕，所以用于存值
      * @param e 要播放的实体
      */
-    play(name, e, afterReplay = null) {
+    play(name, e, afterReplay = null, afterReplayVar = null) {
         if (this.replays.has(name)) {
-            new Replayer(e).replay(this.replays.get(name), afterReplay);
+            new Replayer(e).replay(this.replays.get(name), afterReplay, afterReplayVar);
         }
         else {
             throw new Error(`Not found! ${name}`);
